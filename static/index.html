@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Scam Guard — Live Fraud Defense</title>
+<style>
+:root {
+  --bg: #0a0e17; --panel: #111827; --panel2: #1a2332;
+  --border: #223049; --text: #e5ecf7; --muted: #8b9bb4;
+  --safe: #22c55e; --low: #84cc16; --med: #eab308; --high: #f97316; --crit: #ef4444; --unk: #64748b;
+  --accent: #38bdf8;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--text); font: 15px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; padding: 24px; }
+h1 { font-size: 20px; letter-spacing: .5px; }
+h1 .tag { background: var(--panel2); border: 1px solid var(--border); color: var(--accent); font-size: 11px; padding: 2px 8px; border-radius: 10px; vertical-align: middle; margin-left: 10px; }
+.topbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+.topbar .status { color: var(--muted); font-size: 13px; }
+.topbar .status b { color: var(--safe); }
+
+.grid { display: grid; grid-template-columns: 380px 1fr 340px; gap: 16px; }
+@media (max-width: 1100px) { .grid { grid-template-columns: 1fr; } }
+
+.card { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 16px; }
+.card h2 { font-size: 13px; text-transform: uppercase; letter-spacing: 1.2px; color: var(--muted); margin-bottom: 12px; }
+
+/* Sim */
+#sim-list { display: flex; flex-direction: column; gap: 8px; }
+.sim-btn { text-align: left; background: var(--panel2); color: var(--text); border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; cursor: pointer; font: inherit; }
+.sim-btn:hover { border-color: var(--accent); }
+.sim-btn .cat { font-size: 11px; color: var(--muted); }
+
+/* Live feed */
+#live-status { font-size: 12px; color: var(--muted); margin-bottom: 10px; display: flex; gap: 8px; align-items: center; }
+.pulse { width: 8px; height: 8px; border-radius: 50%; background: var(--unk); }
+.pulse.live { background: var(--crit); animation: pulse 1.2s infinite; }
+@keyframes pulse { 50% { opacity: .3; } }
+#transcript { min-height: 120px; max-height: 320px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; }
+.seg { background: var(--panel2); border-radius: 8px; padding: 8px 10px; font-size: 13px; animation: slide .25s ease; }
+@keyframes slide { from { opacity: 0; transform: translateY(6px); } }
+.seg .who { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: var(--accent); margin-bottom: 2px; }
+.seg.user .who { color: var(--muted); }
+#live-score { margin-top: 12px; }
+.ring { position: relative; width: 92px; height: 92px; flex-shrink: 0; }
+.ring svg { transform: rotate(-90deg); }
+.ring .val { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.ring .val .n { font-size: 22px; font-weight: 700; }
+.ring .val .l { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; }
+#live-result { display: flex; gap: 14px; align-items: center; }
+#live-result .detail { font-size: 13px; color: var(--muted); }
+#live-result .detail b { color: var(--text); }
+
+/* Flags */
+#flag-list { display: flex; flex-direction: column; gap: 6px; }
+.flag { background: var(--panel2); border-left: 3px solid var(--high); border-radius: 6px; padding: 8px 10px; font-size: 12px; }
+.flag .w { float: right; color: var(--crit); font-weight: 700; }
+
+/* Table */
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+th { text-align: left; color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: 1px; padding: 8px 10px; border-bottom: 1px solid var(--border); }
+td { padding: 10px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+tr:hover td { background: rgba(56,189,248,.04); }
+.chip { display: inline-block; padding: 2px 9px; border-radius: 10px; font-size: 11px; font-weight: 600; }
+.chip.safe { background: rgba(34,197,94,.15); color: var(--safe); }
+.chip.low { background: rgba(132,204,22,.15); color: var(--low); }
+.chip.medium { background: rgba(234,179,8,.15); color: var(--med); }
+.chip.high { background: rgba(249,115,22,.15); color: var(--high); }
+.chip.critical { background: rgba(239,68,68,.15); color: var(--crit); }
+.chip.unknown { background: rgba(100,116,139,.2); color: var(--unk); }
+.actions button { background: var(--panel2); border: 1px solid var(--border); color: var(--text); border-radius: 6px; padding: 4px 8px; font: 12px inherit; cursor: pointer; margin-right: 4px; }
+.actions button:hover { border-color: var(--accent); }
+.actions button.voice { color: var(--accent); }
+
+/* Stats */
+.stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 14px; }
+.stat { background: var(--panel2); border-radius: 8px; padding: 10px 12px; }
+.stat .n { font-size: 22px; font-weight: 700; }
+.stat .k { font-size: 11px; color: var(--muted); }
+.bar-row { display: flex; align-items: center; gap: 8px; font-size: 12px; margin-bottom: 6px; }
+.bar-row .bar { flex: 1; height: 6px; background: var(--panel2); border-radius: 3px; overflow: hidden; }
+.bar-row .bar i { display: block; height: 100%; }
+
+/* Filters */
+.filters { display: flex; gap: 8px; margin-bottom: 10px; }
+.filters select { background: var(--panel2); color: var(--text); border: 1px solid var(--border); border-radius: 6px; padding: 6px 8px; font: inherit; }
+footer { margin-top: 20px; color: var(--muted); font-size: 12px; text-align: center; }
+</style>
+</head>
+<body>
+<div class="topbar">
+  <h1>SHIELD&nbsp;:: Scam Guard <span class="tag">LIVE FRAUD DEFENSE</span></h1>
+  <div class="status" id="api-status">connecting…</div>
+</div>
+
+<div class="grid">
+  <!-- Left: simulator -->
+  <div class="card">
+    <h2>Simulate a call</h2>
+    <div id="sim-list"></div>
+    <div class="card" style="margin-top:14px; background:transparent; border:none; padding:0;">
+      <p style="font-size:12px; color:var(--muted);">Select a scenario to stream the transcript live and watch the real-time risk engine screen it. When the call ends, the LLM refines the score (when configured).</p>
+    </div>
+  </div>
+
+  <!-- Center: live feed + incidents -->
+  <div style="display:flex; flex-direction:column; gap:16px;">
+    <div class="card">
+      <h2>Live call screening</h2>
+      <div id="live-status"><span class="pulse" id="pulse"></span><span id="live-label">Idle — select a scenario on the left</span></div>
+      <div id="transcript"><div style="color:var(--muted); font-size:13px;">No active call.</div></div>
+      <div id="live-score" style="display:none;">
+        <div id="live-result">
+          <div class="ring">
+            <svg width="92" height="92"><circle cx="46" cy="46" r="40" stroke="#1a2332" stroke-width="8" fill="none"/><circle id="ring-fg" cx="46" cy="46" r="40" stroke="var(--unk)" stroke-width="8" fill="none" stroke-linecap="round" stroke-dasharray="251.3" stroke-dashoffset="251.3"/></svg>
+            <div class="val"><span class="n" id="live-score-n">–</span><span class="l" id="live-score-l">score</span></div>
+          </div>
+          <div class="detail" id="live-detail"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Incident log</h2>
+      <div class="filters">
+        <select id="f-status"><option value="">All statuses</option><option>screening</option><option>analyzed</option><option>flagged</option><option>confirmed_scam</option><option>dismissed</option></select>
+        <select id="f-risk"><option value="">All risk</option><option value="70">High / Critical (≥70)</option><option value="40">Medium+ (≥40)</option></select>
+        <button class="sim-btn" style="padding:6px 10px;" onclick="loadCalls()">Refresh</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Time</th><th>Caller</th><th>Category</th><th>Risk</th><th>Status</th><th>Actions</th></tr></thead>
+          <tbody id="incidents"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right: stats + red flags -->
+  <div style="display:flex; flex-direction:column; gap:16px;">
+    <div class="card">
+      <h2>Defense stats</h2>
+      <div class="stats" id="stats"></div>
+      <div id="dist"></div>
+    </div>
+    <div class="card">
+      <h2>Top red flags</h2>
+      <div id="flag-list"><span style="color:var(--muted); font-size:12px;">No flags yet.</span></div>
+    </div>
+  </div>
+</div>
+
+<footer>Scam Guard · heuristics + LLM risk engine · Fish Audio S2.1 Pro voice briefings · v1.0</footer>
+
+<script>
+const API = location.origin;
+const LEVEL_COLORS = { safe:'#22c55e', low:'#84cc16', medium:'#eab308', high:'#f97316', critical:'#ef4444', unknown:'#64748b' };
+let liveWS = null, liveSegs = [], liveScore = null, activeCall = null;
+
+function levelColor(l){ return LEVEL_COLORS[l] || LEVEL_COLORS.unknown; }
+
+async function init(){
+  const h = await fetch(API + '/health').then(r => r.json()).catch(() => ({status:'offline'}));
+  document.getElementById('api-status').innerHTML = h.status === 'ok'
+    ? 'API <b>online</b> · LLM ' + (h.llm_configured ? '<b>configured</b> (' + h.llm_provider + '/' + h.llm_model + ')' : 'not configured — heuristics only')
+    : 'API <b>offline</b>';
+  loadScenarios(); loadCalls(); loadStats();
+}
+
+async function loadScenarios(){
+  const r = await fetch(API + '/api/simulator/scenarios'); const list = await r.json();
+  document.getElementById('sim-list').innerHTML = list.map(s =>
+    '<button class="sim-btn" onclick="runScenario(\'' + s.id + '\')">' +
+    '<div style="font-size:13px;">' + (s.caller_id_name || s.title) + '</div>' +
+    '<div class="cat">' + (s.category ? s.category.replace(/_/g,' ') : s.title) + ' · ' + s.transcript.length + ' lines</div></button>'
+  ).join('');
+}
+
+async function runScenario(id){
+  const res = await fetch(API + '/api/simulator/run', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({scenario_id: id}) });
+  const call = await res.json();
+  activeCall = call.id; liveSegs = []; liveScore = null;
+  document.getElementById('transcript').innerHTML = '';
+  document.getElementById('live-score').style.display = 'none';
+  document.getElementById('live-label').textContent = 'Screening ' + (call.caller_id_name || call.source_number) + '…';
+  document.getElementById('pulse').classList.add('live');
+  connectWS(call.id);
+}
+
+function connectWS(callId){
+  if (liveWS) liveWS.close();
+  const proto = location.protocol === 'https:' ? 'wss' : 'ws';
+  liveWS = new WebSocket(proto + '://' + location.host + '/ws/calls/' + callId);
+  liveWS.onmessage = (m) => {
+    const ev = JSON.parse(m.data);
+    if (ev.event === 'segment') onSegment(ev);
+    if (ev.event === 'analysis_completed') onAnalyzed(ev);
+    if (ev.event === 'stream_done'){ document.getElementById('pulse').classList.remove('live'); document.getElementById('live-label').textContent = 'Analysis complete for ' + ev.call_id; loadCalls(); loadStats(); }
+  };
+  liveWS.onclose = () => { if (!liveWS.closed) document.getElementById('pulse').classList.remove('live'); };
+}
+
+function onSegment(ev){
+  const seg = ev.segment;
+  liveSegs.push(seg);
+  const d = document.createElement('div');
+  d.className = 'seg ' + (seg.speaker === 'user' ? 'user' : '');
+  d.innerHTML = '<div class="who">' + seg.speaker + '</div>' + escapeHtml(seg.text);
+  const t = document.getElementById('transcript');
+  const idle = t.querySelector('div[style*="muted"]'); if (idle) idle.remove();
+  t.appendChild(d); t.scrollTop = t.scrollHeight;
+  setScore(ev.provisional_score, ev.provisional_level, true);
+}
+
+function onAnalyzed(ev){
+  setScore(ev.risk_score, ev.risk_level, false);
+  document.getElementById('live-detail').innerHTML =
+    'Engine <b>' + (ev.engine || 'hybrid') + '</b> · category <b>' + (ev.category || '—') + '</b><br>' +
+    escapeHtml(ev.summary || ev.verdict || '');
+  renderFlags(ev.red_flags || []);
+}
+
+function setScore(score, level, provisional){
+  document.getElementById('live-score').style.display = 'block';
+  document.getElementById('live-score-n').textContent = score ?? '–';
+  document.getElementById('live-score-l').textContent = provisional ? 'live' : level;
+  const ring = document.getElementById('ring-fg');
+  const c = 251.3; ring.style.stroke = levelColor(level); ring.style.strokeDashoffset = c - (c * (score ?? 0)) / 100;
+}
+
+function renderFlags(flags){
+  const el = document.getElementById('flag-list');
+  if (!flags.length){ el.innerHTML = '<span style="color:var(--muted); font-size:12px;">No flags.</span>'; return; }
+  el.innerHTML = flags.map(f => '<div class="flag"><span class="w">+' + f.weight + '</span>' + escapeHtml(f.label || f.id) + '</div>').join('');
+}
+
+async function loadCalls(){
+  const st = document.getElementById('f-status').value, mr = document.getElementById('f-risk').value;
+  const q = new URLSearchParams({ limit: 60 });
+  if (st) q.set('status', st); if (mr) q.set('min_risk', mr);
+  const calls = await (await fetch(API + '/api/calls?' + q)).json();
+  document.getElementById('incidents').innerHTML = calls.map(c =>
+    '<tr><td style="white-space:nowrap;">' + new Date(c.started_at).toLocaleString() + '</td>' +
+    '<td>' + escapeHtml(c.caller_id_name || c.source_number) + '<div style="font-size:11px;color:var(--muted);">' + c.source_number + '</div></td>' +
+    '<td style="font-size:12px;">' + escapeHtml((c.category || '—').replace(/_/g,' ')) + '</td>' +
+    '<td><span class="chip ' + c.risk_level + '">' + (c.risk_score != null ? c.risk_score + '/' : '') + c.risk_level + '</span></td>' +
+    '<td style="font-size:12px;">' + c.status + '</td>' +
+    '<td class="actions">' +
+      '<button onclick="act(\'' + c.id + '\', \'dismissed\')">Dismiss</button>' +
+      '<button onclick="act(\'' + c.id + '\', \'confirmed_scam\')">Scam</button>' +
+      '<button class="voice" onclick="voice(\'' + c.id + '\')">Voice</button>' +
+    '</td></tr>'
+  ).join('') || '<tr><td colspan="6" style="color:var(--muted);">No calls recorded yet.</td></tr>';
+}
+document.getElementById('f-status').onchange = loadCalls;
+document.getElementById('f-risk').onchange = loadCalls;
+
+async function act(id, status){
+  await fetch(API + '/api/calls/' + id, { method: 'PATCH', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ status }) });
+  loadCalls(); loadStats();
+}
+
+async function voice(id){
+  const r = await fetch(API + '/api/tts/briefing/' + id, { method: 'POST' });
+  const j = await r.json();
+  if (j.status === 'ready' && j.audio_url) { window.location = j.audio_url; }
+  else alert('Voice briefing unavailable: ' + (j.reason || 'error'));
+}
+
+async function loadStats(){
+  const s = await (await fetch(API + '/api/calls/stats')).json();
+  document.getElementById('stats').innerHTML =
+    statCard(s.total_calls, 'calls seen') + statCard(s.flagged, 'flagged') +
+    statCard(s.confirmed_scam, 'confirmed scams') + statCard(s.avg_risk, 'avg risk');
+  const dist = s.risk_distribution || {};
+  const max = Math.max(1, ...Object.values(dist));
+  document.getElementById('dist').innerHTML = Object.entries(dist).map(([k,v]) =>
+    '<div class="bar-row"><span style="width:52px;">' + k + '</span><span class="bar"><i style="width:' + (v / max * 100) + '%; background:' + levelColor(k) + '"></i></span><span>' + v + '</span></div>'
+  ).join('');
+}
+function statCard(n, k){ return '<div class="stat"><div class="n">' + n + '</div><div class="k">' + k + '</div></div>'; }
+
+function escapeHtml(s){ const d = document.createElement('div'); d.textContent = s ?? ''; return d.innerHTML; }
+init();
+</script>
+</body>
+</html>

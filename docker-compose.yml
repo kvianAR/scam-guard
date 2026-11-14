@@ -1,0 +1,21 @@
+services:
+  scamguard:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      # LLM — any OpenAI-compatible provider
+      - SCAMGUARD_LLM_PROVIDER=${SCAMGUARD_LLM_PROVIDER:-openai}
+      - SCAMGUARD_LLM_API_KEY=${SCAMGUARD_LLM_API_KEY:-}
+      - SCAMGUARD_LLM_MODEL=${SCAMGUARD_LLM_MODEL:-gpt-4o-mini}
+      # Fish Audio S2.1 Pro
+      - SCAMGUARD_FISH_API_KEY=${SCAMGUARD_FISH_API_KEY:-}
+      - SCAMGUARD_FISH_MODEL=${SCAMGUARD_FISH_MODEL:-S2.1}
+    volumes:
+      - scamguard-data:/srv/scam-guard/data
+      - scamguard-audio:/srv/scam-guard/audio
+    restart: unless-stopped
+
+volumes:
+  scamguard-data:
+  scamguard-audio:

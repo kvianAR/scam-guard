@@ -1,0 +1,27 @@
+{
+  "source_number": "+1-555-0101",
+  "caller_id_name": "City Dental Clinic",
+  "display_name": "City Dental Clinic",
+  "status": "analyzed",
+  "risk_score": 8,
+  "risk_level": "low",
+  "category": "legitimate",
+  "verdict": "Routine appointment reminder call.",
+  "summary": "Caller is a local dental clinic reminding about a scheduled cleaning on Thursday 4pm. No financial requests, no urgency pressure.",
+  "engine": "heuristic",
+  "confidence": 0.9,
+  "category_label": "Likely legitimate",
+  "recommended_actions": [
+    "Confirm your appointment on the clinic's published number if unsure",
+    "No action needed"
+  ],
+  "red_flags": [],
+  "base_minutes_ago": 120,
+  "transcript": [
+    {"speaker": "caller", "text": "Hello, this is Maria from City Dental Clinic calling.", "ts": 0.0},
+    {"speaker": "user", "text": "Hi Maria.", "ts": 4.0},
+    {"speaker": "caller", "text": "Just confirming your teeth cleaning is still on for this Thursday at 4pm.", "ts": 7.0},
+    {"speaker": "user", "text": "Yes that works for me. Thank you.", "ts": 10.0},
+    {"speaker": "caller", "text": "Great, see you Thursday. Have a good day.", "ts": 13.0}
+  ]
+}

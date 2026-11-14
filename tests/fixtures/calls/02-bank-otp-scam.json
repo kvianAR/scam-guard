@@ -1,0 +1,32 @@
+{
+  "source_number": "+1-212-555-0187",
+  "caller_id_name": "Chase Bank Security",
+  "display_name": "Chase Bank",
+  "status": "flagged",
+  "risk_score": 95,
+  "risk_level": "critical",
+  "category": "identity_theft",
+  "verdict": "Classic banking OTP-harvest scam.",
+  "summary": "Caller claims to be Chase security and says the user's account is compromised. Asks the user to read out the 6-digit code that just arrived on their phone — no bank ever asks for this on an inbound call.",
+  "engine": "hybrid",
+  "confidence": 0.97,
+  "category_label": "Identity / credential theft",
+  "recommended_actions": [
+    "Hang up immediately",
+    "Call Chase on the number printed on the back of your card",
+    "Do NOT share the OTP you just received"
+  ],
+  "red_flags": [
+    {"id": "password_credential", "label": "OTP / credential harvest", "weight": 95, "category": "identity_theft"},
+    {"id": "account_compromised", "label": "Claim of compromised account", "weight": 85, "category": "banking_fraud"},
+    {"id": "urgency_pressure", "label": "High-pressure urgency language", "weight": 30, "category": "generic_suspicion"}
+  ],
+  "base_minutes_ago": 45,
+  "transcript": [
+    {"speaker": "caller", "text": "This is the fraud department at Chase Bank. Your account was flagged for suspicious activity right now.", "ts": 0.0},
+    {"speaker": "user", "text": "Oh no, what's going on?", "ts": 5.0},
+    {"speaker": "caller", "text": "We need to verify it's really you. I just sent a 6-digit code to your phone, can you read that code to me?", "ts": 9.0},
+    {"speaker": "user", "text": "It says 4-4-1-0-2-9?", "ts": 14.0},
+    {"speaker": "caller", "text": "Thank you. I'm locking your other accounts now. Don't tell anyone about this process.", "ts": 18.0}
+  ]
+}

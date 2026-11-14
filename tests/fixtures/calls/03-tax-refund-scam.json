@@ -1,0 +1,30 @@
+{
+  "source_number": "+1-800-555-0142",
+  "caller_id_name": "IRS Benefits Office",
+  "display_name": "Unknown",
+  "status": "confirmed_scam",
+  "risk_score": 88,
+  "risk_level": "high",
+  "category": "tax_refund",
+  "verdict": "Fake IRS tax-refund release scam.",
+  "summary": "Caller claims to be the IRS and says a refund is held pending a 'processing fee' of $290 that must be paid to a personal account before release. The IRS never requests payment of fees to release refunds.",
+  "engine": "llm",
+  "confidence": 0.93,
+  "category_label": "Tax-refund / government benefit",
+  "recommended_actions": [
+    "Do NOT pay any fee — the IRS does not collect refund 'processing fees'",
+    "Verify refund status on the official IRS site only",
+    "Report this number to your local consumer protection agency"
+  ],
+  "red_flags": [
+    {"id": "tax_refund", "label": "Tax-refund / government benefit claim", "weight": 85, "category": "tax_refund"},
+    {"id": "fee_to_release", "label": "Advance-fee / release-of-funds demand", "weight": 90, "category": "advance_fee"}
+  ],
+  "base_minutes_ago": 90,
+  "transcript": [
+    {"speaker": "caller", "text": "Good morning, this is an agent from the IRS benefits division. You have an outstanding tax refund of $4,200 pending release.", "ts": 0.0},
+    {"speaker": "user", "text": "Oh great, when will it be sent?", "ts": 5.0},
+    {"speaker": "caller", "text": "We first need a $290 processing fee wired to our dedicated account. Once cleared, your check will be mailed within 48 hours.", "ts": 10.0},
+    {"speaker": "user", "text": "I'll arrange that transfer.", "ts": 14.0}
+  ]
+}

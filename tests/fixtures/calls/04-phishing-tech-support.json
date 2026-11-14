@@ -1,0 +1,29 @@
+{
+  "source_number": "+1-415-555-0173",
+  "caller_id_name": "Microsoft Support",
+  "display_name": "Unknown",
+  "status": "analyzed",
+  "risk_score": 72,
+  "risk_level": "high",
+  "category": "phishing_technical_support",
+  "verdict": "Microsoft tech-support social engineering.",
+  "summary": "Caller claims to be Microsoft and says the user's computer has been flagged for malware. Asks the user to install a remote-control tool and log into their banking site while they watch — textbook remote-session hijack.",
+  "engine": "llm",
+  "confidence": 0.88,
+  "category_label": "Phishing / fake tech support",
+  "recommended_actions": [
+    "Never let anyone install remote-access software on your machine",
+    "Call Microsoft directly on 1-800 numbers from their official site",
+    "Run your own antivirus update locally"
+  ],
+  "red_flags": [
+    {"id": "remote_access", "label": "Remote-access / software install request", "weight": 90, "category": "phishing_technical_support"},
+    {"id": "tech_support", "label": "Fake IT / tech-support escalation", "weight": 75, "category": "phishing_technical_support"}
+  ],
+  "base_minutes_ago": 20,
+  "transcript": [
+    {"speaker": "caller", "text": "Hello, this is the Microsoft security team. Your computer was flagged for critical malware.", "ts": 0.0},
+    {"speaker": "user", "text": "I'm sorry? I don't know about that.", "ts": 4.0},
+    {"speaker": "caller", "text": "I need you to install the teamviewer app I'm sending you, and log into your email so I can show you the problem live.", "ts": 9.0}
+  ]
+}
